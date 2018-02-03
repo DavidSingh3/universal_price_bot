@@ -11,6 +11,13 @@ const bot = new Discord.Client({
   autorun: true
 })
 
+const requestLimit = 1e3 * 30 // seconds to milliseconds
+const userLock = {}
+const privilegedUsers = [
+  'F40PH'
+]
+
+
 bot.on('ready', function (evt) {
   console.log('Connected')
   console.log('Logged in as: ')
@@ -24,48 +31,75 @@ bot.on('message', async (user, userID, channelID, message, evt) => {
     let args = message.substring(1).split(' ')
     const cmd = args[0]
 
+
     args = args.splice(1).map(arg => arg.toUpperCase())
     switch (cmd) {
       case 'price':
         if (args.length !== 2)
           break
 
-        const options = {
-          method: 'POST',
-          url: API_host + ':' + API_port + '/price/' + args[0] + '/' + args[1],
-          headers: {
-            'Cache-Control': 'no-cache',
-            'User-Agent': 'none',
-            'Content-Type': 'application/json'
+        if(userLock[userID]) {
+          const lastRequested = userLock[userID]
+          const now = Date.now()
+          const millisecondsAgo = now - lastRequested
+          const rem = requestLimit - millisecondsAgo
+          if(rem > 0) {
+            bot.sendMessage({
+              to: channelID,
+              message: '```' + user + ' must wait ' + parseInt(rem/1e3) + ' more seconds before requesting another price.```'
+            })
+            break
           }
         }
-        const prices = JSON.parse((await request(options, (response, body) => response)))
-        const keys = Object.keys(prices)
-        const values = Object.values(prices)
-        const tabLength = 5
-        const keyLength = keys.reduce(
-          (length, key) => {
-            if (key.length > length)
-              return key.length
-            return length
-          }, 0
-        )
-        let lineLength = 0
-        const message = '```' + keys.map(
-          (key, index) => {
-            const line = key
-              .concat(Array(keyLength + tabLength - key.length).fill(' ').join(''))
-              .concat(values[index])
-              .concat(' ' + args[0] + '/' + args[1])
-            lineLength = Math.max(lineLength, line.length)
-            return line
-          }
-        ).join('\n') + '```'
+        userLock[userID] = Date.now()
 
-        bot.sendMessage({
-          to: channelID,
-          message
-        })
+        try {
+          const options = {
+            method: 'POST',
+            url: API_host + ':' + API_port + '/price/' + args[0] + '/' + args[1],
+            headers: {
+              'Cache-Control': 'no-cache',
+              'User-Agent': 'none',
+              'Content-Type': 'application/json'
+            }
+          }
+          const data = JSON.parse((await request(options, (response, body) => response)))
+          if (data.length === 0)
+            return
+          data.unshift({
+            n: '========',
+            p: '========'
+          })
+          data.unshift({
+            n: 'Exchange',
+            p: args[1]+'/'+args[0]
+          })
+          const tabLength = 5
+          const keyLength = data.reduce(
+            (length, key) => {
+              if (key.p.length > length)
+                return key.p.length
+              return length
+            }, 0
+          )
+          let lineLength = 0
+          const message = '```' + data.map(
+            key => {
+              const line = key.n
+                .concat(Array(keyLength + tabLength - key.n.length).fill(' ').join(''))
+                .concat(key.p)
+              lineLength = Math.max(lineLength, line.length)
+              return line
+            }
+          ).join('\n') + '```'
+
+            bot.sendMessage({
+              to: channelID,
+              message
+            })
+        } catch (e) {
+          console.log(e)
+        }
         break
 // Just add any case commands if you want to..
     }
