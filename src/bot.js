@@ -49,7 +49,19 @@ bot.on('message', async (user, userID, channelID, message, evt) => {
             break
           }
         }
-        if(privilegedUsers.indexOf(userID) === -1)
+
+        userLock.forEach(
+          user => {
+            const lastRequested = userLock[user]
+            const now = Date.now()
+            const millisecondsAgo = now - lastRequested
+            const rem = requestLimit - millisecondsAgo
+            if(rem <= 0)
+              delete userLock[user]
+          }
+        )
+
+        if (privilegedUsers.indexOf(userID) === -1)
           userLock[userID] = Date.now()
 
         try {
