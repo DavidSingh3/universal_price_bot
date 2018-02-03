@@ -14,9 +14,8 @@ const bot = new Discord.Client({
 const requestLimit = 1e3 * 30 // seconds to milliseconds
 const userLock = {}
 const privilegedUsers = [
-  'F40PH'
+  '222527365664735233' // F40PH
 ]
-
 
 bot.on('ready', function (evt) {
   console.log('Connected')
@@ -31,27 +30,27 @@ bot.on('message', async (user, userID, channelID, message, evt) => {
     let args = message.substring(1).split(' ')
     const cmd = args[0]
 
-
     args = args.splice(1).map(arg => arg.toUpperCase())
     switch (cmd) {
       case 'price':
         if (args.length !== 2)
           break
 
-        if(userLock[userID]) {
+        if (userLock[userID]) {
           const lastRequested = userLock[userID]
           const now = Date.now()
           const millisecondsAgo = now - lastRequested
           const rem = requestLimit - millisecondsAgo
-          if(rem > 0) {
+          if (rem > 0) {
             bot.sendMessage({
               to: channelID,
-              message: '```' + user + ' must wait ' + parseInt(rem/1e3) + ' more seconds before requesting another price.```'
+              message: '```' + user + ' must wait ' + parseInt(rem / 1e3) + ' more seconds before requesting another price.```'
             })
             break
           }
         }
-        userLock[userID] = Date.now()
+        if(privilegedUsers.indexOf(userID) === -1)
+          userLock[userID] = Date.now()
 
         try {
           const options = {
@@ -72,7 +71,7 @@ bot.on('message', async (user, userID, channelID, message, evt) => {
           })
           data.unshift({
             n: 'Exchange',
-            p: args[1]+'/'+args[0]
+            p: args[1] + '/' + args[0]
           })
           const tabLength = 5
           const keyLength = data.reduce(
@@ -93,10 +92,10 @@ bot.on('message', async (user, userID, channelID, message, evt) => {
             }
           ).join('\n') + '```'
 
-            bot.sendMessage({
-              to: channelID,
-              message
-            })
+          bot.sendMessage({
+            to: channelID,
+            message
+          })
         } catch (e) {
           console.log(e)
         }
