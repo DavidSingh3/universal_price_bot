@@ -1,12 +1,11 @@
 const Discord = require('discord.io')
-const auth = require('./auth.json')
 const request = require('./requests').request
 
 const API_host = process.env.API_host || 'http://localhost'
 
 // Initialize Discord Bot
 const bot = new Discord.Client({
-  token: auth.token,
+  token: process.env.token,
   autorun: true
 })
 
