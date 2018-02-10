@@ -69,7 +69,7 @@ bot.on('message', async (user, userID, channelID, message, evt) => {
           const url = API_host + '/price/' + args[0] + '/' + args[1]
           console.log(url)
           const options = {
-            method: 'POST',
+            method: 'GET',
             url,
             headers: {
               'Cache-Control': 'no-cache',
