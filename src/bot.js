@@ -3,7 +3,6 @@ const auth = require('./auth.json')
 const request = require('./requests').request
 
 const API_host = process.env.API_host || 'http://localhost'
-const API_port = process.env.API_post || '3000'
 
 // Initialize Discord Bot
 const bot = new Discord.Client({
@@ -67,7 +66,7 @@ bot.on('message', async (user, userID, channelID, message, evt) => {
         try {
           const options = {
             method: 'POST',
-            url: API_host + ':' + API_port + '/price/' + args[0] + '/' + args[1],
+            url: API_host + '/price/' + args[0] + '/' + args[1],
             headers: {
               'Cache-Control': 'no-cache',
               'User-Agent': 'none',
