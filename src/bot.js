@@ -48,16 +48,14 @@ bot.on('message', async (user, userID, channelID, message, evt) => {
           }
         }
         try {
-          userLock.forEach(
-            user => {
-              const lastRequested = userLock[user]
-              const now = Date.now()
-              const millisecondsAgo = now - lastRequested
-              const rem = requestLimit - millisecondsAgo
-              if(rem <= 0)
-                delete userLock[user]
-            }
-          )
+          for (let user in userLock) {
+            const lastRequested = userLock[user]
+            const now = Date.now()
+            const millisecondsAgo = now - lastRequested
+            const rem = requestLimit - millisecondsAgo
+            if(rem <= 0)
+              delete userLock[user]
+          }
         } catch (e) {
           console.log(e)
         }
