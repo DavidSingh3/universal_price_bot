@@ -107,7 +107,7 @@ bot.on('message', async (user, userID, channelID, message, evt) => {
           const message = '```' + data.map(
             key => {
               let price = []
-              let n = false
+              let n = false;
               ([...key.p]).forEach( char => {
                 if(n === false) {
                   if(char === '.') {
