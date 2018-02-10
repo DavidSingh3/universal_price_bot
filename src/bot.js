@@ -106,9 +106,25 @@ bot.on('message', async (user, userID, channelID, message, evt) => {
           let lineLength = 0
           const message = '```' + data.map(
             key => {
+              let price = []
+              let n = false
+              ([...key.p]).forEach( char => {
+                if(n === false) {
+                  if(char === '.') {
+                    n = 0
+                  }
+                } else {
+                  n++
+                  if(n%3 === 0) {
+                    price.push(',')
+                  }
+                }
+                price.push(char)
+              })
+              price = price.join('')
               const line = key.n
                 .concat(Array(keyLength + tabLength - key.n.length).fill(' ').join(''))
-                .concat(key.p)
+                .concat(price)
               lineLength = Math.max(lineLength, line.length)
               return line
             }
