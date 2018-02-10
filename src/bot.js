@@ -121,10 +121,9 @@ bot.on('message', async (user, userID, channelID, message, evt) => {
                 }
                 price.push(char)
               })
-              price = price.join('')
               const line = key.n
                 .concat(Array(keyLength + tabLength - key.n.length).fill(' ').join(''))
-                .concat(price)
+                .concat(price.join(''))
               lineLength = Math.max(lineLength, line.length)
               return line
             }
