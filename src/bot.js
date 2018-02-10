@@ -75,7 +75,9 @@ bot.on('message', async (user, userID, channelID, message, evt) => {
               'Content-Type': 'application/json'
             }
           }
-          const data = JSON.parse((await request(options, (response, body) => response)))
+          const req = await request(options, (response, body) => response)
+          console.log(req)
+          const data = JSON.parse(req)
           if (data.length === 0)
             return
           data.unshift({
