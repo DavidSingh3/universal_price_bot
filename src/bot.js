@@ -47,17 +47,20 @@ bot.on('message', async (user, userID, channelID, message, evt) => {
             break
           }
         }
-
-        userLock.forEach(
-          user => {
-            const lastRequested = userLock[user]
-            const now = Date.now()
-            const millisecondsAgo = now - lastRequested
-            const rem = requestLimit - millisecondsAgo
-            if(rem <= 0)
-              delete userLock[user]
-          }
-        )
+        try {
+          userLock.forEach(
+            user => {
+              const lastRequested = userLock[user]
+              const now = Date.now()
+              const millisecondsAgo = now - lastRequested
+              const rem = requestLimit - millisecondsAgo
+              if(rem <= 0)
+                delete userLock[user]
+            }
+          )
+        } catch (e) {
+          console.log(e)
+        }
 
         if (privilegedUsers.indexOf(userID) === -1)
           userLock[userID] = Date.now()
