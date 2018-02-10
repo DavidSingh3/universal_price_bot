@@ -111,7 +111,7 @@ bot.on('message', async (user, userID, channelID, message, evt) => {
               ([...key.p]).forEach( char => {
                 if(n === false) {
                   if(char === '.') {
-                    n = 0
+                    n = -1
                   }
                 } else {
                   n++
