@@ -115,7 +115,7 @@ bot.on('message', async (user, userID, channelID, message, evt) => {
                   }
                 } else {
                   n++
-                  if(n%3 === 0) {
+                  if(n%3 === 0 && n !== 0) {
                     price.push(',')
                   }
                 }
