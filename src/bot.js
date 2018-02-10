@@ -66,9 +66,11 @@ bot.on('message', async (user, userID, channelID, message, evt) => {
           userLock[userID] = Date.now()
 
         try {
+          const url = API_host + '/price/' + args[0] + '/' + args[1]
+          console.log(url)
           const options = {
             method: 'POST',
-            url: API_host + '/price/' + args[0] + '/' + args[1],
+            url,
             headers: {
               'Cache-Control': 'no-cache',
               'User-Agent': 'none',
