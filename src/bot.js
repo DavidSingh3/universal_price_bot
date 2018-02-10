@@ -1,8 +1,15 @@
 const Discord = require('discord.io')
 const request = require('./requests').request
-
+const express = require('express')
+const app = express()
+app.use(express.urlencoded({
+  extended: true
+}))
+const port = process.env.PORT || 3000
 const API_host = process.env.API_host || 'http://localhost'
 
+
+app.listen(port)
 // Initialize Discord Bot
 const bot = new Discord.Client({
   token: process.env.token,
