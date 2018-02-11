@@ -10,6 +10,12 @@ const API_host = process.env.API_host || 'http://localhost'
 
 
 app.listen(port)
+const http = require('http');
+setInterval(function() {
+  http.get('http://peaceful-mesa-87181.herokuapp.com');
+}, 600000); // every 10 minutes (600000)
+
+
 // Initialize Discord Bot
 const bot = new Discord.Client({
   token: process.env.token,
